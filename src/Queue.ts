@@ -4,6 +4,7 @@ class Queue {
     private retries = 0;
     private taskList: any = [];
     private fn;
+    private timeout = 5000;
 
     constructor(fn: Function = (callback: Function) => callback, { limitCount = 1, retries = 0 } = {}) {
         this.limitCount = limitCount
@@ -41,6 +42,7 @@ class Queue {
             resolve(await fn())
         } catch (error) {
             reject(error)
+
         } finally {
             this.runningCount--;
             this.handle();

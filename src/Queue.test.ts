@@ -39,3 +39,56 @@ test('queue.push可以正常执行异步代码', async () => {
     expect(result_3).toBe(3)
     expect(result_4).toBe(4)
 })
+
+// test('queue可以正常超时', async () => {
+//     const queue = new Queue()
+//     const result_1 = await queue.push(() => { return Promise.resolve(1) })
+//     const result_2 = await queue.push(() => {
+//         return new Promise(
+//             (resolve) => {
+//                 setTimeout(() => {
+//                     resolve(2)
+//                 }, 1000);
+//             }
+//         )
+//     })
+//     const result_3 = await queue.push(() => { return 3 })
+//     const result_4 = await queue.push(() => { return 4 })
+//     expect(result_1).toBe(1)
+//     expect(result_2).toBe(2)
+//     expect(result_3).toBe(3)
+//     expect(result_4).toBe(4)
+// })
+
+test('queue可以正常限制数量', async () => {
+    const queue = new Queue((cb: any) => cb, { limitCount: 2 })
+    const result_1 = queue.push(() => { return Promise.resolve(1) })
+    const result_2 = queue.push(() => {
+        return new Promise(
+            (resolve) => {
+                setTimeout(() => {
+                    resolve(2)
+                }, 1000);
+            }
+        )
+    })
+    const result_3 = queue.push(() => {
+        return new Promise(
+            (resolve) => {
+                setTimeout(() => {
+                    resolve(2)
+                }, 1000);
+            }
+        )
+    })
+    const result_4 = queue.push(() => {
+        return new Promise(
+            (resolve) => {
+                setTimeout(() => {
+                    resolve(2)
+                }, 1000);
+            }
+        )
+    })
+    await Promise.all([result_1, result_2, result_3, result_4])
+}, 3000)
