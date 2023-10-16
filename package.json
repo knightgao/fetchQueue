@@ -2,7 +2,7 @@
   "name": "@devgaoy/fetchqueue",
   "private": true,
   "version": "0.0.0",
-  "main": "index",
+  "main": "main.ts",
   "type": "module",
   "scripts": {
     "dev": "vite",

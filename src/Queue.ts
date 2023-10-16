@@ -4,12 +4,14 @@ class Queue {
     private retries = 0;
     private taskList: any = [];
     private fn;
-    private timeout = 5000;
+
+    private cacheMap;
 
     constructor(fn: Function = (callback: Function) => callback, { limitCount = 1, retries = 0 } = {}) {
         this.limitCount = limitCount
         this.retries = retries
         this.fn = fn;
+        this.cacheMap = new Map();
     };
 
     public getTaskList = () => {
@@ -40,8 +42,16 @@ class Queue {
         this.runningCount++;
         try {
             resolve(await fn())
+            this.cacheMap.delete(fn)
         } catch (error) {
-            reject(error)
+            const errCount = this.cacheMap.get(fn) || 1;
+            // 如果报错的次数小于阈值
+            if(errCount < this.retries) {
+                this.cacheMap.set(fn,errCount + 1);
+                this.taskList.unshift({ fn, resolve, reject })
+            }else {
+                reject(error);
+            }
 
         } finally {
             this.runningCount--;
