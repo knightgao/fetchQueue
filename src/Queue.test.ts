@@ -115,3 +115,12 @@ test('queue可以接收同一个函数重试', async () => {
     const result = tempArray.map((item:any) => item.value)
     expect(result[4]).toBe(1);
 })
+
+
+test('queue很多同步的事件而不会卡顿', async () => {
+    //TODO
+})
+
+test('queue支持优先级调整', async () => {
+    //TODO
+})
